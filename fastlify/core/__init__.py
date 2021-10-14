@@ -8,12 +8,21 @@ from fastlify.interfaces.http import AbstractHTTPController
 class Fastlify(Flask):
     HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.middlewares = []
+
     @classmethod
     def create(cls, context: str = __name__):
         return cls(context)
 
     def listen(self, host: str = '0.0.0.0', port: int = 779, debug=False):
         self.run(host, port, debug)
+
+    def register_middleware(self, middleware):
+        self.middlewares.append(middleware)
+
+        # self.before_request()
 
     def register_controller(self, controller: AbstractHTTPController):
         if issubclass(type(controller), HTTPController):
